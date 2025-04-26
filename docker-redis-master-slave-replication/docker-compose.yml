@@ -28,3 +28,12 @@ services:
         depends_on: 
         - master
         - slave1
+    redis-commander:
+        container_name: redis-commander
+        hostname: redis-commander
+        image: rediscommander/redis-commander:latest
+        restart: always
+        environment:
+        - REDIS_HOSTS=master:redis-master,slave-1:redis-slave1,slave-2:redis-slave2
+        ports:
+        - "8081:8081"
