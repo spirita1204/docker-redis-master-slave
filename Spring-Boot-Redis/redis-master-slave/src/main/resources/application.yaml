@@ -1,20 +1,11 @@
-redis:
-  master:
-    host: localhost
-    port: 6379
-  slaves:
-    - host: localhost
-      port: 6380
-    - host: localhost
-      port: 6381
-
 spring:
   redis:
     sentinel:
       master: mymaster
       nodes:
-        - localhost:26379
-        - localhost:26380
-        - localhost:26381
-    timeout: 2000
+        - redis-sentinel1:26379
+        - redis-sentinel2:26380
+        - redis-sentinel3:26381
+    timeout: 5000
 
+    

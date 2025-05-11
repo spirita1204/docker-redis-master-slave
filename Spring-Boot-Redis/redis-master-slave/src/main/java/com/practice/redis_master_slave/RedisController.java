@@ -14,17 +14,16 @@ public class RedisController {
 
     @Autowired
     private StringRedisTemplate template;
-
+    
     @GetMapping("/{name}")
     public void addToSet(@PathVariable String name) {
         System.out.println("addToSet : " + name);
         this.template.opsForSet().add(KEY, name);
     }
-
+    
     @GetMapping("/get")
     public Set<String> getKeyValues() {
         System.out.println("getKeyValues");
         return this.template.opsForSet().members(KEY);
     }
-
 }
