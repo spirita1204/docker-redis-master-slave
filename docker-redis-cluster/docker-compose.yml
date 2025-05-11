@@ -8,7 +8,11 @@ services:
             - REDIS_PORT=9001
         volumes: 
         - ./data/node1/data:/data
-        network_mode: host
+        ports: 
+        - 9001:9001
+        networks:
+        - redis-cluster-net
+
     node2:
         container_name: redis-node2
         build: 
@@ -17,7 +21,10 @@ services:
             - REDIS_PORT=9002
         volumes: 
         - ./data/node2/data:/data
-        network_mode: host
+        ports: 
+        - 9002:9002
+        networks:
+        - redis-cluster-net
     node3:
         container_name: redis-node3
         build: 
@@ -26,7 +33,10 @@ services:
             - REDIS_PORT=9003
         volumes: 
         - ./data/node3/data:/data
-        network_mode: host
+        ports: 
+        - 9003:9003
+        networks:
+        - redis-cluster-net
     node4:
         container_name: redis-node4
         build: 
@@ -35,7 +45,10 @@ services:
             - REDIS_PORT=9004
         volumes: 
         - ./data/node4/data:/data
-        network_mode: host
+        ports: 
+        - 9004:9004
+        networks:
+        - redis-cluster-net
     node5:
         container_name: redis-node5
         build: 
@@ -44,7 +57,10 @@ services:
             - REDIS_PORT=9005
         volumes: 
         - ./data/node5/data:/data
-        network_mode: host
+        ports: 
+        - 9005:9005
+        networks:
+        - redis-cluster-net
     node6:
         container_name: redis-node6
         build: 
@@ -53,12 +69,16 @@ services:
             - REDIS_PORT=9006
         volumes: 
         - ./data/node6/data:/data
-        network_mode: host
+        ports: 
+        - 9006:9006
+        networks:
+        - redis-cluster-net
     cluster-creator:
         image: redis
         container_name: redis-cluster-creator
-        entrypoint: redis-cli --cluster create 192.168.100.4:9001 192.168.100.4:9002 192.168.100.4:9003 192.168.100.4:9004 192.168.100.4:9005 192.168.100.4:9006 --cluster-replicas 1 --cluster-yes
-        network_mode: host
+        entrypoint: redis-cli --cluster create redis-node1:9001 redis-node2:9002 redis-node3:9003 redis-node4:9004 redis-node5:9005 redis-node6:9006 --cluster-replicas 1 --cluster-yes
+        networks:
+        - redis-cluster-net
         depends_on: 
         - node1
         - node2
@@ -66,3 +86,5 @@ services:
         - node4
         - node5
         - node6
+networks:
+  redis-cluster-net:
