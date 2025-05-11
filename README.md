@@ -38,6 +38,7 @@ $ docker exec -it redis-slave2 redis-cli get k1
 
 # Redis 哨兵模式
 ![圖片描述](https://i.imgur.com/6KHCYvi.png)
+
 啟動 docker-compose，並且可以看到會輸出下面這些資訊，這些資訊代表哨兵已經開始監視 Master 而且也獲得了 Slave 的資訊。
 
 ```bash
@@ -152,8 +153,29 @@ Sentinel1 和 Sentinel3 開始從 Sentinel2 取得設定然後更新自己的設
 # +sdown slave 172.30.0.2:6379 172.30.0.2 6379 @ mymaster 172.30.0.3 6379
 ```
 
+
+
 這時再次啟動 redis-master，Sentinel2 會正式的將 redis-master 轉換為 Slave。
 
 ```bash
 * +convert-to-slave slave 172.30.0.2:6379 172.30.0.2 6379 @ mymaster 172.30.0.3 6379
 ```
+## Spring Boot Testing
+### 設定 key
+
+curl -X POST "http://localhost:8080/redis/set?key=foo&value=bar"
+
+### 取得 key
+
+curl "http://localhost:8080/redis/get?key=foo"
+
+### 測試高可用性：模擬故障切換
+
+1. 手動關掉目前的 Redis master（假設是 port 6379）：
+
+```bash
+redis-cli -p 6379 shutdown
+```
+
+1. Sentinel 會自動進行主從切換，大約需要幾秒。
+2. 再次呼叫 `/redis/get?key=foo` 測試是否成功取值，證明切換成功。
